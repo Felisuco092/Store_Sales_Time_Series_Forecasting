@@ -17,6 +17,7 @@ models/
 *.pkl
 *.onnx
 *.model
+.env
 
 # Ignorar archivos generados por la construcción y la ejecución
 __pycache__/
