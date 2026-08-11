@@ -1,0 +1,25 @@
+# Store_Sales_Time_Series_Forecasting
+Competición hecha por Félix Jiménez Almanza
+A kaggle competition for practice of the end-to-end projects
+
+# Ignorar carpetas y archivos específicos
+data/raw/
+data/processed/
+data/sample/
+models/
+.notebooks/
+*.ipynb_checkpoints/
+*.pyc
+*.log
+*.pickle
+*.csv
+*.json
+*.pkl
+*.onnx
+*.model
+
+# Ignorar archivos generados por la construcción y la ejecución
+__pycache__/
+*.py[cod]
+*.swp
+*.DS_Store
