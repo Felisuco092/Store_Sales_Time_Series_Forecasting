@@ -23,4 +23,5 @@ models/
 __pycache__/
 *.py[cod]
 *.swp
+.opencode/
 *.DS_Store
