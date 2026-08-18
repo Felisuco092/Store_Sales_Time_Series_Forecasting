@@ -43,6 +43,10 @@ class DaysSinceStartTransformer(BaseEstimator, TransformerMixin):
 
         return output.to_frame(self.outputColumn)
 
+    def get_feature_names_out(self, input_features=None):
+        """Necesario para set_output(transform='pandas')"""
+        return np.array([self.outputColumn], dtype=object)
+
 ######################
 
 def extract_month_year(df):
@@ -51,8 +55,8 @@ def extract_month_year(df):
 
     return np.column_stack((year, month))
 
-def features_dates():
-    return ['year', 'month']
+def features_dates(transformer, input_features=None):
+    return np.array(['year', 'month'], dtype=object)
 day_month_transformer = FunctionTransformer(extract_month_year, feature_names_out=features_dates)
 
 ######################
@@ -69,7 +73,7 @@ def get_date_transformer():
     ct_create = ColumnTransformer([
         ('days_since_start', DaysSinceStartTransformer(), ['date']),
         ('dates', day_month_transformer, ['date'])
-    ])
+    ], verbose_feature_names_out=False)
     general_pipeline = Pipeline([
         ('transform', ct_create),
         ('scaler', StandardScaler())
@@ -86,8 +90,8 @@ def get_full_preprocessing():
 
     ct = ColumnTransformer([
         ('dates', get_date_transformer(), ['date']),
-        ('remain', 'passthrough', ['store_nbr', 'family'])
-    ])
+        ('remain', 'passthrough', ['store_nbr', 'family']),
+    ], verbose_feature_names_out=False)
     return ct
 
 ######################
@@ -96,6 +100,8 @@ if __name__ == "__main__":
     train_df = load_data(TRAIN_CSV_PATH)
 
     ct = get_full_preprocessing()
+    ct.set_output(transform='pandas')
+
     trf = ct.fit(train_df)
 
     print(trf.transform(train_df))
