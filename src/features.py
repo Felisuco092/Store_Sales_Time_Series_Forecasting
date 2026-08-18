@@ -90,7 +90,7 @@ def get_full_preprocessing():
 
     ct = ColumnTransformer([
         ('dates', get_date_transformer(), ['date']),
-        ('remain', 'passthrough', ['store_nbr', 'family']),
+        ('remain', 'passthrough', ['store_nbr', 'family', 'onpromotion']),
     ], verbose_feature_names_out=False)
     return ct
 
