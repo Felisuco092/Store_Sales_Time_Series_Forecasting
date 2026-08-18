@@ -86,7 +86,7 @@ def get_full_preprocessing():
 
     ct = ColumnTransformer([
         ('dates', get_date_transformer(), ['date']),
-        ('remainder', 'passthrough', ['store_nbr', 'family'])
+        ('remain', 'passthrough', ['store_nbr', 'family'])
     ])
     return ct
 
@@ -95,7 +95,7 @@ def get_full_preprocessing():
 if __name__ == "__main__":
     train_df = load_data(TRAIN_CSV_PATH)
 
-    ct = get_date_transformer()
+    ct = get_full_preprocessing()
     trf = ct.fit(train_df)
 
     print(trf.transform(train_df))
