@@ -76,7 +76,7 @@ def get_date_transformer():
     ], verbose_feature_names_out=False)
     general_pipeline = Pipeline([
         ('transform', ct_create),
-        ('scaler', StandardScaler())
+        #('scaler', StandardScaler()) This scaler is not necessary in this problem this is why its commented
     ])
     return general_pipeline
 
