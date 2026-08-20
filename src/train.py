@@ -12,11 +12,12 @@ from features import get_full_preprocessing
 
 class HybridModel(RegressorMixin, BaseEstimator):
     def __init__(self, *, feature_linear=["days_since_start"], feature_XGBoost=["day", "month", "store_nbr", "onpromotion"], category="store_nbr",
-                 family_feature="family"):
+                 family_feature="family", random_state=None):
         self.feature_linear = feature_linear
         self.feature_XGBoost = feature_XGBoost
         self.category = category
         self.family_feature = family_feature
+        self.random_state = random_state
 
     def _validate_input(self, X):
         if not isinstance(X, pd.DataFrame):
@@ -61,7 +62,7 @@ class HybridModel(RegressorMixin, BaseEstimator):
         for family in self.families_:
             mask = X[self.family_feature] == family
             X_XGBoost = cols_XGBoost.loc[mask, self.feature_XGBoost]
-            xgb = XGBRegressor(enable_categorical=True).fit(X_XGBoost, y_residuals[mask])
+            xgb = XGBRegressor(enable_categorical=True, random_state=self.random_state).fit(X_XGBoost, y_residuals[mask])
             self.models_XGBoost_[family] = xgb
 
 
