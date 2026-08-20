@@ -29,7 +29,7 @@ time_series_kaggle/
 │   ├── data.py                 # Carga, limpieza y particionado
 │   ├── features.py             # Feature engineering reutilizable
 │   ├── train.py                # Script de entrenamiento e hiperparámetros
-│   └── predict.py              # Lógica de inferencia con el modelo cargado
+│   └── pipeline.py             # Programa principal que prueba todo con un pipeline
 │
 ├── api/                        # Capa de Backend (Servicio web)
 │   ├── __init__.py
