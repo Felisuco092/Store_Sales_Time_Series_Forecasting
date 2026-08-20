@@ -50,13 +50,13 @@ class DaysSinceStartTransformer(BaseEstimator, TransformerMixin):
 ######################
 
 def extract_month_year(df):
-    year = df['date'].dt.year
+    day = df['date'].dt.day
     month = df['date'].dt.month
 
-    return np.column_stack((year, month))
+    return np.column_stack((day, month))
 
 def features_dates(transformer, input_features=None):
-    return np.array(['year', 'month'], dtype=object)
+    return np.array(['day', 'month'], dtype=object)
 day_month_transformer = FunctionTransformer(extract_month_year, feature_names_out=features_dates)
 
 ######################
