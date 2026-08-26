@@ -3,16 +3,19 @@ from sklearn.metrics import mean_squared_log_error
 from features import get_full_preprocessing
 from train import HybridModel
 from data import load_data
-from config import TRAIN_CSV_PATH, TEST_CSV_PATH
+from config import TRAIN_CSV_PATH, TEST_CSV_PATH, MODEL_PATH
 import numpy as np
 import pandas as pd
+
+from huggingface_hub import login, upload_folder
 
 import joblib
 import os
 
 #Si el modelo ya existe lo cargamos
-if os.path.exists("./data/processed/LinearandXGBoost/model.joblib"):
-    pipeline = joblib.load("./data/processed/LinearandXGBoost/model.joblib")
+os.makedirs("./data/processed/LinearandXGBoost/model", exist_ok=True)
+if os.path.exists(MODEL_PATH + "/model.joblib"):
+    pipeline = joblib.load(MODEL_PATH + "/model.joblib")
     print("Modelo cargado")
 else:
     print("Modelo no encontrado")
@@ -40,7 +43,7 @@ else:
     print("MSLE on test set:")
     print(np.sqrt(mean_squared_log_error(y_test, pipeline.predict(X_test))))
 
-    joblib.dump(pipeline, "./data/processed/LinearandXGBoost/model.joblib")
+    joblib.dump(pipeline, MODEL_PATH + "/model.joblib")
 
 test_df = load_data(TEST_CSV_PATH)
 
@@ -49,3 +52,11 @@ predictions = pd.DataFrame(pipeline.predict(test_df), columns=["sales"], index=t
 predictions.index.name = "id"
 print(predictions.head())
 predictions.to_csv("./data/processed/LinearandXGBoost/predictions.csv")
+
+if input(str("Subir al huggin face hub? (y/n) ")) == "y":
+    login()
+    upload_folder(
+        folder_path=MODEL_PATH,
+        repo_id="Felisuco092/timeSeriesSalesKaggle", 
+        repo_type="model"
+    )
