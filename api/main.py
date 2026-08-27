@@ -52,13 +52,19 @@ async def predict_sale(prediction: Prediction):
 async def predict_sale(predictions: list[Prediction]):
     prediction_dict = [prediction.model_dump() for prediction in predictions]
 
-        
     df = pd.DataFrame(prediction_dict)
 
-    if "id" in df.columns:
+    boolean = df["id"].notnull().all()
+    if boolean:
         df = df.set_index("id")
     df["date"] = pd.to_datetime(df["date"])
 
     y_pred = model.predict(df)
-    print(y_pred)
-    return [{"id": prediction.id, "sales": y_pred[i]} for i, prediction in enumerate(predictions)]
+    print("boolean", boolean)
+
+    if boolean:
+        response = [{"id": prediction.id, "sales": y_pred[i]} for i, prediction in enumerate(predictions)]
+    else:
+        response = y_pred.ravel().tolist()
+
+    return response
