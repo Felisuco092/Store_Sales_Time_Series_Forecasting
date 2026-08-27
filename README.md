@@ -41,3 +41,21 @@ time_series_kaggle/
     ├── test_data.py
     └── test_api.py
 ```
+
+## Modelo Entrenado
+
+El modelo entrenado y su control de versiones se encuentran en:
+🔗 [Hugging Face Model Registry](https://huggingface.co/Felisuco092/timeSeriesSalesKaggle/tree/main)
+
+### ⚠️ Importante para usar el modelo con joblib
+
+Para que el modelo entrenado funcione correctamente al cargarlo con `joblib`, es **necesario** que el módulo `src` esté disponible como paquete Python. Asegúrate de:
+
+1. Que el directorio `src/` tenga un archivo `__init__.py` (ya incluido en la estructura)
+2. Que `src/` esté en el `PYTHONPATH` o que instales el proyecto como paquete:
+   ```bash
+   pip install -e .
+   ```
+3. Que las importaciones en el modelo coincidan con la estructura de `src/` (ej: `from src.features import ...`)
+
+Sin esto, joblib no podrá desserializar correctamente el modelo y sus dependencias.
