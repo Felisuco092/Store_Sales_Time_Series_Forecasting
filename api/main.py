@@ -46,3 +46,19 @@ async def predict_sale(prediction: Prediction):
     y_pred = model.predict(df)
     print(y_pred)
     return {"sales": y_pred[0]}
+
+
+@app.post("/predicts")
+async def predict_sale(predictions: list[Prediction]):
+    prediction_dict = [prediction.model_dump() for prediction in predictions]
+
+        
+    df = pd.DataFrame(prediction_dict)
+
+    if "id" in df.columns:
+        df = df.set_index("id")
+    df["date"] = pd.to_datetime(df["date"])
+
+    y_pred = model.predict(df)
+    print(y_pred)
+    return [{"id": prediction.id, "sales": y_pred[i]} for i, prediction in enumerate(predictions)]
