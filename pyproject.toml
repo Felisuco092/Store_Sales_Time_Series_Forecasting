@@ -67,3 +67,5 @@ dependencies = [
     "widgetsnbextension==4.0.15",
     "xgboost==3.2.0",
 ]
+[tool.fastapi]
+entrypoint = "api.main:app"

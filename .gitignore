@@ -25,3 +25,4 @@ __pycache__/
 *.swp
 .opencode/
 *.DS_Store
+*.egg-info/
