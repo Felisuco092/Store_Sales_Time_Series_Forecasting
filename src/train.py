@@ -51,19 +51,21 @@ class HybridModel(RegressorMixin, BaseEstimator):
 
         for family in self.families_:
             mask = X[self.family_feature] == family
-            X_linear = cols_linear.loc[mask, self.feature_linear]
-            lr = LinearRegression().fit(X_linear, y[mask])
-            self.models_linear_[family] = lr
-            y_pred_linear[mask] = lr.predict(X_linear)
+            if mask.any():
+                X_linear = cols_linear.loc[mask, self.feature_linear]
+                lr = LinearRegression().fit(X_linear, y[mask])
+                self.models_linear_[family] = lr
+                y_pred_linear[mask] = lr.predict(X_linear)
 
         y_residuals = y - y_pred_linear
 
         self.models_XGBoost_ = {}
         for family in self.families_:
             mask = X[self.family_feature] == family
-            X_XGBoost = cols_XGBoost.loc[mask, self.feature_XGBoost]
-            xgb = XGBRegressor(enable_categorical=True, random_state=self.random_state).fit(X_XGBoost, y_residuals[mask])
-            self.models_XGBoost_[family] = xgb
+            if mask.any():
+                X_XGBoost = cols_XGBoost.loc[mask, self.feature_XGBoost]
+                xgb = XGBRegressor(enable_categorical=True, random_state=self.random_state).fit(X_XGBoost, y_residuals[mask])
+                self.models_XGBoost_[family] = xgb
 
 
         self.is_fitted_ = True
@@ -77,15 +79,17 @@ class HybridModel(RegressorMixin, BaseEstimator):
 
         for family in self.families_:
             mask = X[self.family_feature] == family
-            X_linear = cols_linear.loc[mask, self.feature_linear]
-            y_pred_linear[mask] = self.models_linear_[family].predict(X_linear)
+            if mask.any():
+                X_linear = cols_linear.loc[mask, self.feature_linear]
+                y_pred_linear[mask] = self.models_linear_[family].predict(X_linear)
 
         y_pred_XGBoost = pd.Series(index=X.index, dtype=float)
 
         for family in self.families_:
             mask = X[self.family_feature] == family
-            X_XGBoost = cols_XGBoost.loc[mask, self.feature_XGBoost]
-            y_pred_XGBoost[mask] = self.models_XGBoost_[family].predict(X_XGBoost)
+            if mask.any():
+                X_XGBoost = cols_XGBoost.loc[mask, self.feature_XGBoost]
+                y_pred_XGBoost[mask] = self.models_XGBoost_[family].predict(X_XGBoost)
 
         y_pred = y_pred_linear + y_pred_XGBoost
 
