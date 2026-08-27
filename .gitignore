@@ -26,3 +26,7 @@ __pycache__/
 .opencode/
 *.DS_Store
 *.egg-info/
+
+# Rest client
+api_prueba/
+*.rest
