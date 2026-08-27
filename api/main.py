@@ -1,13 +1,16 @@
 from fastapi import FastAPI
 import os
 import joblib
+from .schemas import Prediction
+import pandas as pd
+import numpy as np
 
 
 app = FastAPI()
 
 
 ## Logica de cargar modelo
-ENV = os.getenv("ENVIRONMENT", "docker")
+ENV = os.getenv("ENVIRONMENT", "dev")
 
 # Esto para cargarlo en docker
 if ENV == "docker":
@@ -29,6 +32,17 @@ else: #Y esto para cargarlo en dev
 
 model = joblib.load(model_file)
 
-@app.get("/")
-async def read_item(item_id):
-    return {"item_id": item_id}
+@app.post("/predict")
+async def predict_sale(prediction: Prediction):
+    prediction_dict = prediction.model_dump()
+    if prediction.id is not None:
+        index = [prediction.id]
+    else:
+        index = [0]
+    
+    df = pd.DataFrame(prediction_dict, index=index)
+    df["date"] = pd.to_datetime(df["date"])
+
+    y_pred = model.predict(df)
+    print(y_pred)
+    return {"sales": y_pred[0]}
