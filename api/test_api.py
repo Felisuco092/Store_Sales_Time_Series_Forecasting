@@ -26,7 +26,7 @@ def test_predict_sale(client_and_mock):
     message = {
         "date": "2017-08-16",
         "store_nbr": 1,
-        "family": "AUTOMOTIVE",
+        "family": "BEAUTY",
         "onpromotion": 0
     }
     response = client.post("/predict", json=message)
@@ -78,3 +78,36 @@ def test_predicts_sales_without_ids(client_and_mock):
     response = client.post("/predicts", json=message)
     assert response.status_code == 200
     assert response.json() == [5,7]
+
+def test_predict_error_in_unprocessable_entity(client_and_mock):
+    client, mock_modelo = client_and_mock
+
+    message = {
+        "date": "2017-08-16",
+        "store_nbr": 1,
+        "family": "UTY",
+        "onpromotion": 0
+    }
+    response = client.post("/predict", json=message)
+    assert response.status_code == 422
+
+
+def test_predicts_error_in_unprocessable_entity(client_and_mock):
+    client, mock_modelo = client_and_mock
+
+    message = [
+        {
+            "date": "2017-08-16",
+            "store_nbr": 1,
+            "family": "UTY",
+            "onpromotion": 0
+        },
+        {
+            "date": "2017-08-16",
+            "store_nbr": 1,
+            "family": "BABY CARE",
+            "onpromotion": 0
+        }
+    ]
+    response = client.post("/predicts", json=message)
+    assert response.status_code == 422
