@@ -30,3 +30,6 @@ __pycache__/
 # Rest client
 api_prueba/
 *.rest
+
+#pytest
+.pytest_cache/
