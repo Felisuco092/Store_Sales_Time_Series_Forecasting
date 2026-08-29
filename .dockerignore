@@ -1,0 +1,39 @@
+# Control de versiones y metadatos
+.git/
+.gitignore
+.github/
+
+# Entornos virtuales y paquetes
+.venv/
+env/
+venv/
+
+# Caché de Python y compilados
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Notebooks y exploración (no necesarios para producción/inferencia)
+notebooks/
+.ipynb_checkpoints/
+
+# Datos pesados (se ignora todo data/)
+data/
+
+# Tests (opcional: excluidos de la imagen final de producción)
+api/test_api.py
+
+# Archivos de configuración de IDEs y OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Logs y variables de entorno locales
+*.log
+.env
