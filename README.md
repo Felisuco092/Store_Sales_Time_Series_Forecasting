@@ -9,9 +9,10 @@ Estructura del proyecto inicial:
 time_series_kaggle/
 ├── .gitignore
 ├── README.md
-├── requirements.txt            # o pyproject.toml / environment.yml
+├── pyproject.toml  
+├── uv.lock
+├── .dockerignore
 ├── Dockerfile                  # Contenerización de la app de inferencia
-├── docker-compose.yml          # Opcional: si montas backend + base de datos
 │
 ├── data/                       # IGNORADO EN .GITIGNORE (excepto sample)
 │   ├── raw/                    # Datos originales de Kaggle
@@ -31,15 +32,13 @@ time_series_kaggle/
 │   ├── train.py                # Script de entrenamiento e hiperparámetros
 │   └── pipeline.py             # Programa principal que prueba todo con un pipeline
 │
-├── api/                        # Capa de Backend (Servicio web)
-│   ├── __init__.py
-│   ├── main.py                 # FastAPI / Flask endpoint
-│   └── schemas.py              # Validación de entradas/salidas (Pydantic)
-│
-├── models/                     # Artefactos del modelo (.pkl, .onnx, etc.) -> .gitignore
-└── tests/                      # Pruebas unitarias
-    ├── test_data.py
-    └── test_api.py
+└──  api/                        # Capa de Backend (Servicio web)
+    ├── __init__.py
+    ├── main.py                 # FastAPI / Flask endpoint
+    └── schemas.py              # Validación de entradas/salidas (Pydantic)
+    └── test_api.py             # Tests para main.py (Pytest)
+
+
 ```
 
 ## Modelo Entrenado
