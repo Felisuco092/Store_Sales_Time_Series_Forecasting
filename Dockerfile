@@ -21,8 +21,10 @@ COPY --from=builder /app/dist /tmp/dist
 #Instalamos el wheel
 RUN uv pip install /tmp/dist/*.whl && rm -rf /tmp/dist
 
+#Descargamos el modelo
+RUN hf download Felisuco092/timeSeriesSalesKaggle model.joblib --repo-type model --local-dir /app/models
+
 #Copiamos el código
-ENV ENVIRONMENT="docker"
 COPY api/ ./api/
 
 #Exponemos el puerto
