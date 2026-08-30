@@ -9,6 +9,18 @@ import pytest
 #Hacemos una fixture para preparar el mock de joblib y ejecutar el lifespan
 @pytest.fixture
 def client_and_mock():
+    """
+    Provide a test client with a mocked joblib model load.
+
+    Parameters
+    ----------
+    None
+
+    Yields
+    ------
+    tuple
+        A tuple with the FastAPI test client and the mocked model.
+    """
     with patch("api.main.joblib.load") as mock_joblib_load:
         mock_modelo = MagicMock()
         mock_joblib_load.return_value = mock_modelo
@@ -20,6 +32,18 @@ def client_and_mock():
 #############
 
 def test_predict_sale(client_and_mock):
+    """
+    Test that a single prediction returns the correct sales value.
+
+    Parameters
+    ----------
+    client_and_mock : tuple
+        The test client and the mocked model.
+
+    Returns
+    -------
+    None
+    """
     client, mock_modelo = client_and_mock
     mock_modelo.predict.return_value = [5]
 
@@ -34,6 +58,18 @@ def test_predict_sale(client_and_mock):
     assert response.json() == {"sales": 5}
 
 def test_predicts_sales_with_ids(client_and_mock):
+    """
+    Test that batch predictions with ids return results keyed by id.
+
+    Parameters
+    ----------
+    client_and_mock : tuple
+        The test client and the mocked model.
+
+    Returns
+    -------
+    None
+    """
     client, mock_modelo = client_and_mock
     mock_modelo.predict.return_value = [5,7]
 
@@ -58,6 +94,18 @@ def test_predicts_sales_with_ids(client_and_mock):
     assert response.json() == [{"id": 3000888, "sales": 5}, {"id": 3000889, "sales": 7}]
 
 def test_predicts_sales_without_ids(client_and_mock):
+    """
+    Test that batch predictions without ids return a plain list of values.
+
+    Parameters
+    ----------
+    client_and_mock : tuple
+        The test client and the mocked model.
+
+    Returns
+    -------
+    None
+    """
     client, mock_modelo = client_and_mock
     mock_modelo.predict.return_value = np.array([5,7])
 
@@ -80,6 +128,18 @@ def test_predicts_sales_without_ids(client_and_mock):
     assert response.json() == [5,7]
 
 def test_predict_error_in_unprocessable_entity(client_and_mock):
+    """
+    Test that a single prediction with an invalid family returns 422.
+
+    Parameters
+    ----------
+    client_and_mock : tuple
+        The test client and the mocked model.
+
+    Returns
+    -------
+    None
+    """
     client, mock_modelo = client_and_mock
 
     message = {
@@ -93,6 +153,18 @@ def test_predict_error_in_unprocessable_entity(client_and_mock):
 
 
 def test_predicts_error_in_unprocessable_entity(client_and_mock):
+    """
+    Test that batch predictions with an invalid family return 422.
+
+    Parameters
+    ----------
+    client_and_mock : tuple
+        The test client and the mocked model.
+
+    Returns
+    -------
+    None
+    """
     client, mock_modelo = client_and_mock
 
     message = [

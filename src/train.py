@@ -11,8 +11,48 @@ from features import get_full_preprocessing
 ##### Modelo custom
 
 class HybridModel(RegressorMixin, BaseEstimator):
+    """
+    Hybrid model that combines a Linear Regression with an XGBoost regressor.
+
+    The model fits a linear regression on the 'days_since_start' feature for
+    each product family and then fits an XGBoost regressor on the residuals
+    using the remaining features. Predictions are the sum of both components.
+
+    Parameters
+    ----------
+    feature_linear : list of str, optional
+        Features used by the linear regression. Default is ['days_since_start'].
+    feature_XGBoost : list of str, optional
+        Features used by the XGBoost regressor.
+        Default is ['day', 'month', 'store_nbr', 'onpromotion'].
+    category : str, optional
+        Name of the categorical column. Default is 'store_nbr'.
+    family_feature : str, optional
+        Name of the column used to group the data by product family.
+        Default is 'family'.
+    random_state : int, optional
+        Seed for the XGBoost regressor. Default is None.
+    """
     def __init__(self, *, feature_linear=["days_since_start"], feature_XGBoost=["day", "month", "store_nbr", "onpromotion"], category="store_nbr",
                  family_feature="family", random_state=None):
+        """
+        Initialize the HybridModel.
+
+        Parameters
+        ----------
+        feature_linear : list of str, optional
+            Features used by the linear regression. Default is ['days_since_start'].
+        feature_XGBoost : list of str, optional
+            Features used by the XGBoost regressor.
+            Default is ['day', 'month', 'store_nbr', 'onpromotion'].
+        category : str, optional
+            Name of the categorical column. Default is 'store_nbr'.
+        family_feature : str, optional
+            Name of the column used to group the data by product family.
+            Default is 'family'.
+        random_state : int, optional
+            Seed for the XGBoost regressor. Default is None.
+        """
         self.feature_linear = feature_linear
         self.feature_XGBoost = feature_XGBoost
         self.category = category
@@ -20,6 +60,20 @@ class HybridModel(RegressorMixin, BaseEstimator):
         self.random_state = random_state
 
     def _validate_input(self, X):
+        """
+        Validate the input dataframe and return the feature subsets.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            The input dataframe, which must be a DataFrame and contain the
+            family and category columns.
+
+        Returns
+        -------
+        tuple of pandas.DataFrame
+            The linear features and the XGBoost features.
+        """
         if not isinstance(X, pd.DataFrame):
                     raise TypeError(
                         f"HybridModel requiere un pandas DataFrame como entrada X, "
@@ -37,6 +91,21 @@ class HybridModel(RegressorMixin, BaseEstimator):
 
         return X_copy[self.feature_linear], X_copy[self.feature_XGBoost]
     def fit(self, X, y):
+        """
+        Fit the linear and XGBoost models for each product family.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            The input dataframe with the features.
+        y : pandas.Series or array-like
+            The target values (sales).
+
+        Returns
+        -------
+        self
+            The fitted model.
+        """
         cols_linear, cols_XGBoost = self._validate_input(X)
 
         # Asegurar que y tenga el mismo índice que X para poder usar máscaras booleanas
@@ -71,6 +140,22 @@ class HybridModel(RegressorMixin, BaseEstimator):
         self.is_fitted_ = True
         return self
     def predict(self, X):
+        """
+        Predict the sales for the given input data.
+
+        The prediction is the sum of the linear regression and XGBoost
+        predictions, clipped to be non-negative.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            The input dataframe with the features.
+
+        Returns
+        -------
+        numpy.ndarray
+            The predicted sales values.
+        """
         check_is_fitted(self, "is_fitted_")
 
         cols_linear, cols_XGBoost = self._validate_input(X)

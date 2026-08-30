@@ -33,29 +33,110 @@ class DaysSinceStartTransformer(BaseEstimator, TransformerMixin):
         Calculates the number of days since the first date for each row in the input dataframe.
     """
     def __init__(self, dayColumn='date', outputColumn='days_since_start'): 
+        """
+        Initialize the DaysSinceStartTransformer.
+
+        Parameters
+        ----------
+        dayColumn : str, optional
+            The name of the column containing the dates. Default is 'date'.
+        outputColumn : str, optional
+            The name of the output column containing the number of days since
+            the first date. Default is 'days_since_start'.
+        """
         self.dayColumn = dayColumn
         self.outputColumn = outputColumn
     def fit(self, X, y=None):
+        """
+        Calculate the first date in the input dataframe.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            The input dataframe containing the date column.
+        y : array-like, optional
+            Ignored. Present for compatibility with the scikit-learn API.
+
+        Returns
+        -------
+        self
+            The fitted transformer.
+        """
         self.diaPrimero_ = X[self.dayColumn].min()
         return self
     def transform(self, X, y=None):
+        """
+        Calculate the number of days since the first date for each row.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            The input dataframe containing the date column.
+        y : array-like, optional
+            Ignored. Present for compatibility with the scikit-learn API.
+
+        Returns
+        -------
+        pandas.DataFrame
+            A single-column dataframe with the 'days_since_start' feature.
+        """
         output = (X[self.dayColumn] - self.diaPrimero_).dt.days + 1
 
         return output.to_frame(self.outputColumn)
 
     def get_feature_names_out(self, input_features=None):
-        """Necesario para set_output(transform='pandas')"""
+        """
+        Return the output feature names for set_output(transform='pandas').
+
+        Parameters
+        ----------
+        input_features : array-like, optional
+            Ignored. Present for compatibility with the scikit-learn API.
+
+        Returns
+        -------
+        numpy.ndarray
+            Array with the name of the output column.
+        """
         return np.array([self.outputColumn], dtype=object)
 
 ######################
 
 def extract_month_year(df):
+    """
+    Extract the day and month from the 'date' column of the dataframe.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The input dataframe containing the 'date' column.
+
+    Returns
+    -------
+    numpy.ndarray
+        An array of shape (n_samples, 2) with the day and month of each date.
+    """
     day = df['date'].dt.day
     month = df['date'].dt.month
 
     return np.column_stack((day, month))
 
 def features_dates(transformer, input_features=None):
+    """
+    Return the output feature names for the day_month_transformer.
+
+    Parameters
+    ----------
+    transformer : object
+        The transformer instance (ignored compability with the scikit-learn API).
+    input_features : array-like, optional
+        The input feature names (ignored compatibility with the scikit-learn API).
+
+    Returns
+    -------
+    numpy.ndarray
+        Array with the names of the generated features.
+    """
     return np.array(['day', 'month'], dtype=object)
 day_month_transformer = FunctionTransformer(extract_month_year, feature_names_out=features_dates)
 

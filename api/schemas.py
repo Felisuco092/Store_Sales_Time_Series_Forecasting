@@ -3,6 +3,9 @@ from enum import Enum
 from datetime import date
 
 class Family(str, Enum):
+    """
+    Enum of the valid product families accepted by the prediction API.
+    """
     AUTOMOTIVE = "AUTOMOTIVE"
     BABY_CARE = "BABY CARE"
     BEAUTY = "BEAUTY"
@@ -40,6 +43,22 @@ class Family(str, Enum):
 
 
 class Prediction(BaseModel):
+    """
+    Request payload for a single sales prediction.
+
+    Attributes
+    ----------
+    id : int or None
+        Optional identifier of the prediction. Default is None.
+    date : date
+        The date of the prediction.
+    store_nbr : int
+        The store number.
+    family : Family
+        The product family.
+    onpromotion : int
+        Number of items on promotion.
+    """
     id: int | None = None
     date: date
     store_nbr: int
