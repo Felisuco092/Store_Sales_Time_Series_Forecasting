@@ -1,7 +1,10 @@
+[![CI](https://github.com/Felisuco092/Store_Sales_Time_Series_Forecasting/actions/workflows/CI.yml/badge.svg)](https://github.com/Felisuco092/Store_Sales_Time_Series_Forecasting/actions/workflows/CI.yml)
+[![CD](https://github.com/Felisuco092/Store_Sales_Time_Series_Forecasting/actions/workflows/CD.yml/badge.svg)](https://github.com/Felisuco092/Store_Sales_Time_Series_Forecasting/actions/workflows/CD.yml)
+[![Docker Pulls](https://img.shields.io/docker/pulls/felisuco092/timeseriessales?label=Docker%20Pulls&logo=docker)](https://hub.docker.com/r/felisuco092/timeseriessales)
+
 # Store_Sales_Time_Series_Forecasting
 Competición hecha por Félix Jiménez Almanza
 A kaggle competition for practice of the end-to-end projects
-
 
 Estructura del proyecto inicial:
 
