@@ -53,7 +53,7 @@ Para que el modelo entrenado funcione correctamente al cargarlo con `joblib`, es
 1. Que el directorio `src/` tenga un archivo `__init__.py` (ya incluido en la estructura)
 2. Que `src/` esté en el `PYTHONPATH` o que instales el proyecto como paquete:
    ```bash
-   pip install -e .
+   pip install .
    ```
 3. Que las importaciones en el modelo coincidan con la estructura de `src/` (ej: `from src.features import ...`)
 
