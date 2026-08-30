@@ -183,3 +183,52 @@ def test_predicts_error_in_unprocessable_entity(client_and_mock):
     ]
     response = client.post("/predicts", json=message)
     assert response.status_code == 422
+
+def test_predict_error_negative_values(client_and_mock):
+    """
+    Test that a single prediction with negative values returns 422.
+
+    Parameters
+    ----------
+    client_and_mock : tuple
+        The test client and the mocked model.
+
+    Returns
+    -------
+    None
+    """
+    client, mock_modelo = client_and_mock
+
+    message = {
+        "id": -1,
+        "date": "2017-08-16",
+        "store_nbr": 1,
+        "family": "BEAUTY",
+        "onpromotion": -5
+    }
+    response = client.post("/predict", json=message)
+    assert response.status_code == 422
+
+def test_predict_error_store_nbr_out_of_range(client_and_mock):
+    """
+    Test that a single prediction with an out of range store_nbr returns 422.
+
+    Parameters
+    ----------
+    client_and_mock : tuple
+        The test client and the mocked model.
+
+    Returns
+    -------
+    None
+    """
+    client, mock_modelo = client_and_mock
+
+    message = {
+        "date": "2017-08-16",
+        "store_nbr": 55,
+        "family": "BEAUTY",
+        "onpromotion": 0
+    }
+    response = client.post("/predict", json=message)
+    assert response.status_code == 422
