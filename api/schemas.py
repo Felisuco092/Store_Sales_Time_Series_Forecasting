@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from typing import Annotated
+from pydantic import BaseModel, Field
 from enum import Enum
 from datetime import date
 
@@ -49,18 +50,19 @@ class Prediction(BaseModel):
     Attributes
     ----------
     id : int or None
-        Optional identifier of the prediction. Default is None.
+        Optional identifier of the prediction. Default is None. Must be
+        non-negative.
     date : date
         The date of the prediction.
     store_nbr : int
-        The store number.
+        The store number, between 1 and 54.
     family : Family
         The product family.
     onpromotion : int
-        Number of items on promotion.
+        Number of items on promotion. Must be non-negative.
     """
-    id: int | None = None
+    id: Annotated[int | None, Field(ge=0)] = None
     date: date
-    store_nbr: int
+    store_nbr: Annotated[int, Field(ge=1, le=54)]
     family: Family
-    onpromotion: int
+    onpromotion: Annotated[int, Field(ge=0)]
