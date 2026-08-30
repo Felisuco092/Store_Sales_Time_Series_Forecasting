@@ -1,30 +1,37 @@
 FROM python:3.10.21-slim-trixie AS builder
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app
+
+# Desactiva la caché persistente para no inflar capas
+ENV UV_NO_CACHE=1 \
+    UV_COMPILE_BYTECODE=1
+
 COPY pyproject.toml uv.lock ./
 COPY src/ ./src/
-RUN uv build --wheel --out-dir /app/dist
+
+# Creamos el entorno virtual, instalamos dependencias y el propio paquete
+RUN uv sync --frozen --no-dev --no-editable
+
+#Descargamos el modelo
+RUN uv run hf download Felisuco092/timeSeriesSalesKaggle model.joblib --repo-type model --local-dir /app/models
+
+#Descargamos la dependencia src del proyecto
+RUN uv pip install .
 
 ## Etapa 2
 FROM python:3.10.21-slim-trixie AS runner
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
 WORKDIR /app
 
-#Instalamos uv
-COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev
+# Copiamos exclusivamente el entorno virtual y el modelo ya listos
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/models /app/models
+
+#El entorno virtual en el PATH
 ENV PATH="/app/.venv/bin:$PATH"
 
-#Copiamos el wheel
-COPY --from=builder /app/dist /tmp/dist
-
-#Instalamos el wheel
-RUN uv pip install /tmp/dist/*.whl && rm -rf /tmp/dist
-
-#Descargamos el modelo
-RUN hf download Felisuco092/timeSeriesSalesKaggle model.joblib --repo-type model --local-dir /app/models
-
-#Copiamos el código
+#Copiamos el código y el pyproject.toml
+COPY pyproject.toml ./
 COPY api/ ./api/
 
 #Exponemos el puerto
